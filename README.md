@@ -2,6 +2,10 @@
 
 This project uses Python and Google’s Mediapipe library to perform real-time hand tracking and gesture recognition.
 
+## Real-Time Hand Tracking
+- Implemented a basic real-time hand tracking script using Python, Mediapipe, and OpenCV.
+- Detects up to two hands and displays 21 landmarks for each hand
+
 ## Features
 - Real-time hand tracking using Mediapipe
 - Detection of basic hand landmarks
