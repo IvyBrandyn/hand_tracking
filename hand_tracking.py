@@ -12,7 +12,7 @@ cap = cv2.VideoCapture(0)   # Use 0 for the default camera
 with mp_hands.Hands(
     static_image_mode=False,        # Detect hands in a video stream
     max_num_hands=2,                # Track up to 2 hands
-    min_detection_confidence=0.7,    # Minimum confidence for hand detection
+    min_detection_confidence=0.7,   # Minimum confidence for hand detection
     min_tracking_confidence=0.7) as hands:
 
     while cap.isOpened():
