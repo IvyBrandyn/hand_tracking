@@ -11,6 +11,12 @@ This project uses Python and Google’s Mediapipe library to perform real-time h
 - Detection of basic hand landmarks
 - Gesture recognition for common hand signs (e.g., Thumbs Up, Peace)
 
+## Project Structure
+- `hand_tracking.py`: Main control script for hand tracking and gesture recognition.
+- `gestures/`: Folder containing separate gesture detection logic.
+  - `thumbs_up.py`: Contains logic for detecting the "Thumbs Up" gesture.
+  - `peace_sign.py`: Contains logic for detecting the "Peace Sign" gesture.
+
 ## Getting Started
 1. Clone this repository:
 <CLONE_RESPOSITORY_LOCATION>

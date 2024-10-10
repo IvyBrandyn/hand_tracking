@@ -1,35 +1,8 @@
 import cv2
 import mediapipe as mp
+from gestures.thumbs_up import is_thumb_up      # Import thumbs up detection
+from gestures.peace_sign import is_peace_sign   # Import peace sign detection
 
-def is_thumb_up(hand_landmarks):
-    """
-    Determines if the thumb is in the "Thumbs Up" position.
-    :param hand_landmarks: The landmarks for a single hand.
-    :return: True if thumb is up, False otherwise.
-    """
-    # Get the landmarks for the thumb tip and IP (intermediate phalange joint)
-    thumb_tip_y = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].y
-    thumb_ip_y = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP].y
-
-    # Check if the thumb tip is higher (lesser y value) than the IP joint (indicating "thumbs up")
-    return thumb_tip_y < thumb_ip_y
-
-def is_peace_sign(hand_landmarks):
-    """
-    Determines if the hand is in the "Peace Sign" position.
-    :param hand_landmarks: The landmarks for a single hand.
-    :return: True if in the peace sign position, False otherwise.
-    """
-    # Check the y-coordinates of the tips of the index and middle fingers
-    index_tip_y = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y
-    middle_tip_y = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP].y
-
-    # Check the y-coordinates of the ring and pinky finger tips
-    ring_tip_y = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_TIP].y
-    pinky_tip_y = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP].y
-
-    # If the index and middle are extended, and the ring and pinky are not, it's a peace sign
-    return index_tip_y < ring_tip_y and middle_tip_y < pinky_tip_y
 
 # Initialize Mediapipe's Hand class and drawing utilities
 mp_hands = mp.solutions.hands
