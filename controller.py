@@ -1,35 +1,54 @@
+import threading
 import cv2
 import copy
-from trackers.hand_tracker import HandTracker
-from trackers.body_tracking import BodyTracker
-from trackers.face_tracker import FaceTracker
+import json
+from trackers_pipeline import TrackersPipeline
+from reconfigure_modal import ReconfigureModal
 
 
 class Controller:
     def __init__(self):
         self.cap = cv2.VideoCapture(0)  # Initialize the camera feed
-        self.hand_tracker = HandTracker()
-        self.body_tracker = BodyTracker()
-        self.face_tracker = FaceTracker()
-        self.stop_signal = False        # Signal to stop the tracking loop
+
+        # Load the tracker states from the config file
+        self.config = self.load_config()
+
+        # Initialize the TrackersPipeline
+        self.trackers_pipeline = TrackersPipeline()
+
+        # Signal to stop the tracking loop
+        self.stop_signal = False
+
+        # Start the reconfiguration modal in a separate thread
+        self.reconfigure_thread = threading.Thread(target=self.start_reconfigure_modal)
+        self.reconfigure_thread.start()
+
+    def load_config(self):
+        """Loads tracker states from the config.json file."""
+        try:
+            with open("config.json", "r") as config_file:
+                config = json.load(config_file)
+                return config
+        except FileNotFoundError:
+            print("Configuration file not found. Exiting.")
+            self.stop_tracking()
     
     def start_tracking(self):
+        """Main loop for capturing frames and processing pipelines."""
         while not self.stop_signal:
             ret, raw_frame = self.cap.read()
             if not ret:
                 print("Failed to grab frame from camera.")
                 break
 
-            # Create a separate copy for rendering
+            # Create a copy for rendering the processed frame
             render_frame = copy.deepcopy(raw_frame)
 
-            # Process the frame with both trackers using the same raw frame but render on a shared copy
-            self.hand_tracker.process_frame(raw_frame, render_frame)    # Read raw, draw on render_frame
-            self.body_tracker.process_frame(raw_frame, render_frame)    # Read raw, draw on render_frame
-            self.face_tracker.process_frame(raw_frame, render_frame)    # Read raw, draw on render_frame
+            # Process the frame through all enabled pipelines
+            self.trackers_pipeline.process_frame(raw_frame, render_frame)
 
-            # Display the final rendered frame (includes overlay from both trackers)
-            cv2.imshow('Combined Tracking', render_frame)
+            # Display the processed frame
+            cv2.imshow('Combined Pipeline Tracking', render_frame)
 
             # Exit on pressing 'q'
             if cv2.waitKey(5) & 0xFF == ord('q'):
@@ -38,11 +57,18 @@ class Controller:
         
         self.stop_tracking()
     
+    def start_reconfigure_modal(self):
+        """Create and run the reconfigure modal in a separate thread."""
+        self.modal = ReconfigureModal(self.trackers_pipeline)
+        self.modal.run()
+    
     def stop_tracking(self):
-        # Stop both trackers
-        self.hand_tracker.stop()
-        self.body_tracker.stop()
-        self.face_tracker.stop()
+        """Stops the tracking pipelines and releases resources."""
+        self.trackers_pipeline.stop()   # Stop all pipelines
+
+        # Close the reconfigure modal
+        if hasattr(self, 'reconfigure_thread') and self.reconfigure_thread.is_alive():
+            self.modal.root.quit()  # Ensure the Tkinter window is closed
 
         # Release camera resources and close OpenCV windows
         self.cap.release()
