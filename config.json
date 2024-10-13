@@ -1,20 +1,20 @@
 {
-    "trackers": {
+    "tracker_pipelines": {
         "hand": true,
-        "body": true,
+        "body": false,
         "face": false
     },
-    "hand_tracker": {
+    "hand_tracker_pipeline": {
         "max_num_hands": 2,
         "min_detection_confidence": 0.7,
         "min_tracking_confidence": 0.7
     },
-    "body_tracker": {
+    "body_tracker_pipeline": {
         "model_complexity": 1,
         "min_detection_confidence": 0.3,
         "min_tracking_confidence": 0.3
     },
-    "face_tracker": {
+    "face_tracker_pipeline": {
         "max_num_faces": 2,
         "min_detection_confidence": 0.5,
         "min_tracking_confidence": 0.5

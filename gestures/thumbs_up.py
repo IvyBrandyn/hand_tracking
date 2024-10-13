@@ -4,6 +4,7 @@ from gestures.utils import get_relative_positions
 
 mp_hand_landmarks = mp.solutions.hands.HandLandmark
 
+
 def is_thumb_up(hand_landmarks):
     """
     Determines if the thumb is in the "Thumbs Up" position.

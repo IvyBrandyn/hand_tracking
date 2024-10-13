@@ -14,7 +14,7 @@ class Controller:
         self.config = self.load_config()
 
         # Initialize the TrackersPipeline
-        self.trackers_pipeline = TrackersPipeline()
+        self.trackers_pipeline = TrackersPipeline(self.config)
 
         # Signal to stop the tracking loop
         self.stop_signal = False
@@ -32,7 +32,7 @@ class Controller:
         except FileNotFoundError:
             print("Configuration file not found. Exiting.")
             self.stop_tracking()
-    
+
     def start_tracking(self):
         """Main loop for capturing frames and processing pipelines."""
         while not self.stop_signal:
@@ -48,31 +48,32 @@ class Controller:
             self.trackers_pipeline.process_frame(raw_frame, render_frame)
 
             # Display the processed frame
-            cv2.imshow('Combined Pipeline Tracking', render_frame)
+            cv2.imshow("Combined Pipeline Tracking", render_frame)
 
             # Exit on pressing 'q'
-            if cv2.waitKey(5) & 0xFF == ord('q'):
+            if cv2.waitKey(5) & 0xFF == ord("q"):
                 self.stop_signal = True
                 break
-        
+
         self.stop_tracking()
-    
+
     def start_reconfigure_modal(self):
         """Create and run the reconfigure modal in a separate thread."""
         self.modal = ReconfigureModal(self.trackers_pipeline)
         self.modal.run()
-    
+
     def stop_tracking(self):
         """Stops the tracking pipelines and releases resources."""
-        self.trackers_pipeline.stop()   # Stop all pipelines
+        self.trackers_pipeline.stop()  # Stop all pipelines
 
         # Close the reconfigure modal
-        if hasattr(self, 'reconfigure_thread') and self.reconfigure_thread.is_alive():
+        if hasattr(self, "reconfigure_thread") and self.reconfigure_thread.is_alive():
             self.modal.root.quit()  # Ensure the Tkinter window is closed
 
         # Release camera resources and close OpenCV windows
         self.cap.release()
         cv2.destroyAllWindows()
+
 
 if __name__ == "__main__":
     # Initialize and start the controller

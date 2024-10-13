@@ -1,8 +1,11 @@
 import cv2
 import mediapipe as mp
 
+
 class FaceTrackerPipeline:
-    def __init__(self, max_num_faces=2, min_detection_confidence=0.5, min_tracking_confidence=0.5):
+    def __init__(
+        self, max_num_faces=2, min_detection_confidence=0.5, min_tracking_confidence=0.5
+    ):
         # Initialize Mediapipe Face Mesh
         self._max_num_faces = max_num_faces
         self._min_detection_confidence = min_detection_confidence
@@ -22,7 +25,7 @@ class FaceTrackerPipeline:
     @property
     def max_num_faces(self):
         return self._max_num_faces
-    
+
     @max_num_faces.setter
     def max_num_faces(self, value):
         # Type check to ensure the value is an integer
@@ -32,11 +35,11 @@ class FaceTrackerPipeline:
             raise ValueError("max_num_faces must be at last 1.")
         self._max_num_faces = value
         self.initialize_face_mesh()
-    
+
     @property
     def min_detection_confidence(self):
         return self._min_detection_confidence
-    
+
     @min_detection_confidence.setter
     def min_detection_confidence(self, value):
         # Type check to ensure the value is a float
@@ -46,11 +49,11 @@ class FaceTrackerPipeline:
             raise ValueError("min_detection_confidence must be >= 0.0")
         self._min_detection_confidence = value
         self.initialize_face_mesh()
-    
+
     @property
     def min_tracking_confidence(self):
         return self._min_tracking_confidence
-    
+
     @min_tracking_confidence.setter
     def min_tracking_confidence(self, value):
         # Type check to ensure the value is a float
@@ -70,9 +73,15 @@ class FaceTrackerPipeline:
         if results.multi_face_landmarks:
             for face_landmarks in results.multi_face_landmarks:
                 self.mp_drawing.draw_landmarks(
-                    render_frame, face_landmarks, self.mp_face_mesh.FACEMESH_TESSELATION,
-                    self.mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1),
-                    self.mp_drawing.DrawingSpec(color=(80, 256, 121), thickness=1, circle_radius=1)
+                    render_frame,
+                    face_landmarks,
+                    self.mp_face_mesh.FACEMESH_TESSELATION,
+                    self.mp_drawing.DrawingSpec(
+                        color=(80, 110, 10), thickness=1, circle_radius=1
+                    ),
+                    self.mp_drawing.DrawingSpec(
+                        color=(80, 256, 121), thickness=1, circle_radius=1
+                    ),
                 )
 
     def stop(self):

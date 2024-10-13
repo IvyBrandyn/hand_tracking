@@ -3,6 +3,7 @@ import numpy as np
 
 mp_hand_landmarks = mp.solutions.hands.HandLandmark
 
+
 def get_relative_positions(hand_landmarks):
     """
     Converts hand landmark positions to a relative coordinate system centered on the wrist.
@@ -32,21 +33,24 @@ def get_relative_positions(hand_landmarks):
 
     # Define the y-axis (wrist to middle MCP)
     y_axis = middle_mcp_array - wrist_array
-    y_axis /= np.linalg.norm(y_axis)    # Normalize
+    y_axis /= np.linalg.norm(y_axis)  # Normalize
 
     # Define the x-axis as perpendicular to the y-axis
     # In 2D, we can get a perpendicular vector by swapping coordinates and inverting one
     x_axis = np.array([-y_axis[1], y_axis[0]])
 
     # Create a transformation matrix from world to wrist frame
-    transformation_matrix = np.array([x_axis, y_axis]).T    # 2x2 matrix
+    transformation_matrix = np.array([x_axis, y_axis]).T  # 2x2 matrix
 
     # Function to transform a point to the wrist frame
     def transform_to_wrist_frame(landmark):
-        point_vector = np.array([found_landmarks[landmark].x, found_landmarks[landmark].y]) - wrist_array
+        point_vector = (
+            np.array([found_landmarks[landmark].x, found_landmarks[landmark].y])
+            - wrist_array
+        )
         relative_vector = transformation_matrix.dot(point_vector)
         return relative_vector
-    
+
     relative_positions = {}
     for landmark in mp_hand_landmarks:
         relative_positions[landmark] = transform_to_wrist_frame(landmark)
