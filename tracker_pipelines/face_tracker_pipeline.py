@@ -1,6 +1,6 @@
 import cv2
 import mediapipe as mp
-
+from facial_expressions.smiling import is_smiling
 
 class FaceTrackerPipeline:
     def __init__(
@@ -83,6 +83,18 @@ class FaceTrackerPipeline:
                         color=(80, 256, 121), thickness=1, circle_radius=1
                     ),
                 )
+
+                if is_smiling(face_landmarks):
+                    cv2.putText(
+                        render_frame,
+                        "Smiling!",
+                        (30, 50),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1,
+                        (0, 255, 0),
+                        2,
+                        cv2.LINE_AA,
+                    )
 
     def stop(self):
         # Release resources if needed

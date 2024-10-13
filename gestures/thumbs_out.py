@@ -5,26 +5,15 @@ from gestures.utils import is_palm_facing_camera
 
 mp_hand_landmarks = mp.solutions.hands.HandLandmark
 
-def is_thumb_up(hand_landmarks):
-    """
-    Determines if the thumb is in the "Thumbs Up" position.
 
-    TODO: Current implementation fails to determine gesture without using camera frame.
+def is_thumb_out(hand_landmarks):
+    """
+    Determines if the thumb is in the "Thumbs Out" position.
 
     :param hand_landmarks: The landmarks for a single hand.
-    :return: True if thumb is up, False otherwise.
+    :return: True if thumb is out, False otherwise.
     """
     relative_positions = get_relative_positions(hand_landmarks)
-
-    # Get the absolute Y coordinates of the thumb tip and thumb ip in the camera frame
-    thumb_tip_y = hand_landmarks.landmark[mp_hand_landmarks.THUMB_TIP].y
-    thumb_ip_y = hand_landmarks.landmark[mp_hand_landmarks.THUMB_IP].y
-
-    # Thumb's up logic: The thumb tip must be above (lower Y) than the thumb IP joint
-    thumb_pointing_up = thumb_tip_y < thumb_ip_y
-
-    if not thumb_pointing_up:
-        return False
 
     # Check for bent thumb
     thumb_tip_rel = abs(relative_positions[mp_hand_landmarks.THUMB_TIP])
@@ -51,7 +40,7 @@ def is_thumb_up(hand_landmarks):
     fingers_curled = index_curled and middle_curled and ring_curled and pinky_curled
 
     # 1 is too low of a threshold.  Min should be 3, but it is inconsistent.  :/
-    if fingers_curled >= 1 and thumb_bent and thumb_pointing_up:
+    if fingers_curled >= 1 and thumb_bent:
         return True
     else:
         return False

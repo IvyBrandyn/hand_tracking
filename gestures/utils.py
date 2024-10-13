@@ -56,3 +56,48 @@ def get_relative_positions(hand_landmarks):
         relative_positions[landmark] = transform_to_wrist_frame(landmark)
 
     return relative_positions
+
+
+def is_palm_facing_camera(relative_positions):
+    if (
+        relative_positions[mp_hand_landmarks.THUMB_TIP][0] > 0.0
+        or relative_positions[mp_hand_landmarks.THUMB_IP][0] > 0.0
+    ):
+        return True
+    else:
+        return False
+
+
+def is_palm_facing_camera_old(hand_landmarks):
+    # Index Finger: Compare the fingertip with the MCP joint
+    index_finger_tip_z = hand_landmarks.landmark[mp_hand_landmarks.INDEX_FINGER_TIP].z
+    index_finger_mcp_z = hand_landmarks.landmark[mp_hand_landmarks.INDEX_FINGER_MCP].z
+
+    # Middle Finger: Compare the fingertip with the MCP joint
+    middle_finger_tip_z = hand_landmarks.landmark[mp_hand_landmarks.MIDDLE_FINGER_TIP].z
+    middle_finger_mcp_z = hand_landmarks.landmark[mp_hand_landmarks.MIDDLE_FINGER_MCP].z
+
+    # Ring Finger: Compare the fingertip with the MCP joint
+    ring_finger_tip_z = hand_landmarks.landmark[mp_hand_landmarks.RING_FINGER_TIP].z
+    ring_finger_mcp_z = hand_landmarks.landmark[mp_hand_landmarks.RING_FINGER_MCP].z
+
+    # Pinky: Compare the fingertip with the MCP joint
+    pinky_tip_z = hand_landmarks.landmark[mp_hand_landmarks.PINKY_TIP].z
+    pinky_mcp_z = hand_landmarks.landmark[mp_hand_landmarks.PINKY_MCP].z
+
+    index_facing_camera = index_finger_tip_z < index_finger_mcp_z
+    middle_facing_camera = middle_finger_tip_z < middle_finger_mcp_z
+    ring_facing_camera = ring_finger_tip_z < ring_finger_mcp_z
+    pinky_facing_camera = pinky_tip_z < pinky_mcp_z
+
+    result = (
+        index_facing_camera
+        + middle_facing_camera
+        + ring_facing_camera
+        + pinky_facing_camera
+    )
+
+    if result >= 3:
+        return True  # Palm is facing the camera
+    else:
+        return False  # Back of the hand is facing the camera

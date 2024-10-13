@@ -1,8 +1,27 @@
 import cv2
 import mediapipe as mp
 from gestures.thumbs_up import is_thumb_up
+from gestures.thumbs_down import is_thumb_down
+from gestures.thumbs_out import is_thumb_out
 from gestures.peace_sign import is_peace_sign
 
+### Define constants for clarity
+FONT = cv2.FONT_HERSHEY_SIMPLEX
+FONT_SCALE = 1
+FONT_THICKNESS = 2
+LINE_TYPE = cv2.LINE_AA
+
+# Text positions (for example, 'Thumbs Up!' appears at (30, 50))
+THUMBS_UP_TEXT_POS = (30, 50)
+THUMBS_DOWN_TEXT_POS = (30, 50)
+THUMBS_OUT_TEXT_POS = (30, 50)
+PEACE_SIGN_TEXT_POS = (30, 100)
+
+# Text colors in BGR format
+THUMBS_UP_COLOR = (0, 255, 0)  # Green
+THUMBS_DOWN_COLOR = (0, 0, 255)  # Red
+THUMBS_OUT_COLOR = (0, 255, 0)  # Green
+PEACE_SIGN_COLOR = (255, 0, 0)  # Blue
 
 class HandTrackerPipeline:
     def __init__(
@@ -77,18 +96,31 @@ class HandTrackerPipeline:
                     render_frame, hand_landmarks, self.mp_hands.HAND_CONNECTIONS
                 )
 
-                # Check for the "Thumbs Up" gesture
+                # Check for the "Thumb's Up" gesture
                 if is_thumb_up(hand_landmarks):
-                    # Display "Thumbs Up!" text on the frame
+                    # Display "Thumb's Up!" text on the frame
                     cv2.putText(
                         render_frame,
-                        "Thumbs Up!",
-                        (30, 50),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1,
-                        (0, 255, 0),
-                        2,
-                        cv2.LINE_AA,
+                        "Thumb's Up!",
+                        THUMBS_UP_TEXT_POS,
+                        FONT,
+                        FONT_SCALE,
+                        THUMBS_UP_COLOR,
+                        FONT_THICKNESS,
+                        LINE_TYPE,
+                    )
+                # Check for the "Thumb's Down" gesture
+                elif is_thumb_down(hand_landmarks):
+                    # Display "Thumb's Down!" text on the frame
+                    cv2.putText(
+                        render_frame,
+                        "Thumb's Down!",
+                        THUMBS_DOWN_TEXT_POS,
+                        FONT,
+                        FONT_SCALE,
+                        THUMBS_DOWN_COLOR,
+                        FONT_THICKNESS,
+                        LINE_TYPE,
                     )
 
                 # Check for the "Peace Sign" gesture
@@ -96,12 +128,12 @@ class HandTrackerPipeline:
                     cv2.putText(
                         render_frame,
                         "Peace Sign!",
-                        (30, 100),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1,
-                        (255, 0, 0),
-                        2,
-                        cv2.LINE_AA,
+                        PEACE_SIGN_TEXT_POS,
+                        FONT,
+                        FONT_SCALE,
+                        PEACE_SIGN_COLOR,
+                        FONT_THICKNESS,
+                        LINE_TYPE,
                     )
 
     def stop(self):
