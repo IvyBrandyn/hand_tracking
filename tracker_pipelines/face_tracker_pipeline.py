@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 from facial_expressions.smiling import is_smiling
+from facial_expressions.smiling import draw_debug_landmarks
 
 class FaceTrackerPipeline:
     def __init__(
@@ -83,6 +84,9 @@ class FaceTrackerPipeline:
                         color=(80, 256, 121), thickness=1, circle_radius=1
                     ),
                 )
+
+                # Call the function to draw the debug landmarks (in smiling.py)
+                draw_debug_landmarks(render_frame, face_landmarks)
 
                 if is_smiling(face_landmarks):
                     cv2.putText(
