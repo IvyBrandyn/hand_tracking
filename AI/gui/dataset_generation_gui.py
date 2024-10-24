@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import scrolledtext
 from tkinter import ttk
+import logging
 
 
 class DatasetGenerationGUI:
@@ -33,11 +34,35 @@ class DatasetGenerationGUI:
         )
         self.stop_button.grid(row=0, column=1, padx=10)
 
+        # Dropdown for logging levels
+        self.log_levels = {
+            "DEBUG": logging.DEBUG,
+            "INFO": logging.INFO,
+            "WARNING": logging.WARNING,
+            "ERROR": logging.ERROR,
+            "CRITICAL": logging.CRITICAL,
+        }
+        self.log_level_var = tk.StringVar(self.root)
+        self.log_level_var.set("INFO")  # Default log level
+        log_dropdown = tk.OptionMenu(
+            self.root,
+            self.log_level_var,
+            *self.log_levels.keys(),
+            command=self.set_log_level,
+        )
+        log_dropdown.pack(pady=10)
+
         # Create a log window (scrolled text area) for output and activity log
         self.log_area = scrolledtext.ScrolledText(
             self.root, wrap=tk.WORD, width=80, height=20, state="disabled"
         )
         self.log_area.pack(pady=10)
+
+    def set_log_level(self, log_level):
+        """
+        Calls the controller to change the log level.
+        """
+        self.controller.set_log_level(log_level)
 
     def start_generation(self):
         """
